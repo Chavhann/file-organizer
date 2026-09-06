@@ -1,0 +1,11 @@
+﻿__pycache__/
+*.py[cod]
+.pytest_cache/
+organization_log.json
+.vscode/
+.idea/
+venv/
+.venv/
+env/
+ENV/
+*.log
