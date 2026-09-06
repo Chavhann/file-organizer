@@ -1,29 +1,27 @@
 # Python File Organizer
 
-A safe and modular Python utility that automatically organizes loose files into categorized folders based on their file extensions.
+A safe and modular Python CLI tool that automatically organizes files into categorized folders based on their file extensions.
 
-The project is designed with safety and reversibility in mind. It provides preview, dry-run, collision protection, organization history, and undo functionality.
+The tool is designed with safety in mind and includes **Dry Run**, **collision protection**, **organization history**, and **Undo** support.
 
 ## Features
 
-* Organize files by extension
-* Preview files before moving them
-* Dry Run mode with zero filesystem modifications
+* Automatically organizes files by extension
+* Supports multiple file categories
+* Preview file movements before making changes
+* Dry Run mode with no file modifications
+* Prevents overwriting existing files
+* Records successful file movements
 * Undo the most recent organization
-* Scan only files directly inside the selected folder
-* Leave existing subfolders and their contents untouched
-* Skip files when a destination with the same name already exists
-* Prevent Undo from overwriting an existing original file
-* Save successful file movements in JSON history
-* Treat unknown and extensionless files as `Others`
-* Change the target folder without restarting
-* Accept quoted Windows folder paths
-* Validate invalid, missing, and non-folder paths
-* Modular architecture with automated tests
+* Safely handles duplicate filenames
+* Supports unknown file extensions through `Others`
+* Does not recursively modify files inside subfolders
+* Includes automated tests using `pytest`
+* Simple interactive command-line interface
 
 ## Supported Categories
 
-| Category      | File Types                                        |
+| Category      | Extensions                                        |
 | ------------- | ------------------------------------------------- |
 | Documents     | `.pdf`, `.doc`, `.docx`, `.txt`                   |
 | Images        | `.jpg`, `.jpeg`, `.png`, `.gif`, `.webp`, `.tiff` |
@@ -33,109 +31,196 @@ The project is designed with safety and reversibility in mind. It provides previ
 | Programs      | `.exe`, `.msi`                                    |
 | Spreadsheets  | `.xls`, `.xlsx`, `.csv`                           |
 | Presentations | `.ppt`, `.pptx`                                   |
-| Others        | Unknown and unsupported extensions                |
+| Others        | Unknown or unsupported extensions                 |
 
 ## How It Works
 
-```text
-Choose Folder
-     |
-     v
-Scan Loose Files
-     |
-     +----> Scan Summary
-     |
-     +----> Preview
-     |         |
-     |         v
-     |      Confirm
-     |         |
-     |         v
-     |      Organize
-     |         |
-     |         v
-     |   Save Movement History
-     |
-     +----> Dry Run
-     |         |
-     |         v
-     |   Preview Without Changes
-     |
-     +----> Undo Last Organization
-```
+The application follows a simple workflow:
+
+1. Select a folder.
+2. Scan files directly inside the selected folder.
+3. Preview how files will be categorized.
+4. Organize files into category folders.
+5. Record successful file movements in a JSON log.
+6. Optionally undo the most recent organization.
+
+Existing files are never overwritten.
 
 ## Project Structure
 
 ```text
 file-organizer/
 |-- README.md
+|-- LICENSE
+|-- .gitignore
+|
 |-- src/
 |   |-- classifier.py
 |   |-- file_manager.py
 |   `-- organizer.py
+|
 `-- tests/
     |-- test_classifier.py
     `-- test_file_manager.py
+```
 
-### Modules
+## Modules
 
-**`classifier.py`**
+### `src/classifier.py`
 
-* Defines supported file categories
-* Classifies files by extension
-* Handles unknown and extensionless files as `Others`
+Responsible for:
 
-**`file_manager.py`**
+* File extension classification
+* Category definitions
+* Protected organizer folders
 
-* Scans loose files
-* Moves files into category folders
-* Handles filename collisions
-* Saves organization history
-* Restores files during Undo
+Main function:
 
-**`organizer.py`**
+```python
+get_category(file)
+```
 
-* Provides the command-line interface
-* Handles folder selection
-* Displays previews and scan summaries
-* Provides Dry Run, Organize, Undo, and folder-management options
+### `src/file_manager.py`
+
+Responsible for:
+
+* Scanning files
+* Moving files
+* Collision protection
+* Organization history
+* Undo functionality
+
+Main functions:
+
+```python
+scan_files(...)
+organize_files(...)
+undo_last_organization(...)
+```
+
+### `src/organizer.py`
+
+Provides the interactive command-line interface.
+
+Available options:
+
+```text
+1. Organize files
+2. Undo last organization
+3. Dry Run
+4. Scan summary
+5. Change folder
+6. Exit
+```
 
 ## Safety
 
-The organizer is intentionally conservative:
+The organizer is designed to avoid accidental data loss.
 
-* It scans only files directly inside the selected folder.
-* Files inside existing subfolders are not recursively scanned.
-* Existing destination files are never overwritten.
-* Dry Run performs no file modifications.
-* Organization requires explicit confirmation.
-* Undo will not overwrite an existing original file.
-* Only successfully moved files are recorded in organization history.
+### Dry Run
+
+Dry Run shows what would happen without changing any files.
+
+```text
+example.pdf
+   -> Documents\example.pdf
+```
+
+No files are moved during Dry Run.
+
+### Collision Protection
+
+If a destination file already exists, the application skips the file instead of overwriting it.
+
+```text
+SKIPPED: example.pdf
+```
+
+### Undo
+
+The application records successful file movements in:
+
+```text
+organization_log.json
+```
+
+The most recent organization can be reversed using the **Undo last organization** option.
+
+### Subfolder Protection
+
+Only files directly inside the selected folder are processed.
+
+Files inside existing subfolders are not recursively scanned or modified.
 
 ## Requirements
 
 * Python 3.10 or newer
-* `pytest` for running automated tests
+* Windows, Linux, or macOS
+* `pytest` for running tests
+
+The project was tested on:
+
+```text
+Windows
+Python 3.13.2
+```
+
+## Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Chavhann/file-organizer.git
+```
+
+Enter the project directory:
+
+```bash
+cd file-organizer
+```
+
+No external packages are required to run the application.
 
 ## Running the Application
 
-From the project directory:
+From the project root:
+
+### Windows
 
 ```powershell
 py src\organizer.py
 ```
 
-The program will ask for the folder you want to organize.
+### Linux / macOS
+
+```bash
+python3 src/organizer.py
+```
+
+The application will ask you to enter the folder you want to organize.
+
+Example:
+
+```text
+Enter the folder path to organize:
+> C:\Users\Ganes\Downloads
+```
 
 ## Running Tests
 
-Run the complete automated test suite:
+Install `pytest` if it is not already installed:
+
+```powershell
+py -m pip install pytest
+```
+
+Run the complete test suite:
 
 ```powershell
 py -m pytest -v
 ```
 
-Current verified result:
+Current test result:
 
 ```text
 14 passed
@@ -143,51 +228,92 @@ Current verified result:
 
 ## Testing
 
-The project has been manually and automatically tested for:
+The project includes automated tests covering:
 
-* File classification
-* All supported categories
+* File extension classification
 * Unknown extensions
 * Extensionless files
-* Case-insensitive extensions
-* Multi-extension files
-* Loose-file scanning
-* Existing project-folder protection
-* File organization
-* Filename collision protection
+* Archive classification
+* File scanning
+* File movement
+* Duplicate destination protection
 * Undo functionality
 * Undo collision protection
-* Dry Run behavior
-* Organization cancellation
-* Empty folders
-* Undo with no history
-* Reserved organization log handling
-* Folder validation
-* Quoted Windows paths
-* Changing the target folder
-* Invalid menu choices
-* Uppercase and whitespace-tolerant confirmation input
+* Organization history handling
 
-### Automated Test Result
+Manual testing was also performed for:
+
+* Basic organization
+* Undo
+* Dry Run
+* Scan Summary
+* Change Folder
+* Invalid menu input
+* Empty folders
+* Invalid folder paths
+* File paths supplied instead of folders
+* Quoted Windows paths
+* Uppercase confirmation input
+* Cancelled operations
+* Existing destination files
+* Unknown file types
+* Files with no extension
+* Nested subfolder protection
+
+## Example
+
+Before organization:
 
 ```text
-14 passed
+Downloads/
+|-- photo.jpg
+|-- report.pdf
+|-- song.mp3
+|-- video.mp4
+`-- archive.zip
 ```
 
-## Platform Tested
+After organization:
 
-* Windows
-* Python 3.13.2
-* pytest 9.1.1
+```text
+Downloads/
+|-- Documents/
+|   `-- report.pdf
+|
+|-- Images/
+|   `-- photo.jpg
+|
+|-- Audio/
+|   `-- song.mp3
+|
+|-- Videos/
+|   `-- video.mp4
+|
+`-- Archives/
+    `-- archive.zip
+```
 
 ## Future Improvements
 
-Possible future improvements include:
+Possible future enhancements include:
 
-* Recursive organization as an optional mode
-* More file-extension categories
-* Configurable category rules
-* Improved logging and history management
+* Recursive folder organization as an optional mode
+* Custom category configuration
+* File naming conflict resolution
 * GUI interface
-* Windows executable packaging
 * Configuration file support
+* More detailed logging
+* Undo history with multiple organization sessions
+* Command-line arguments for automation
+
+## License
+
+This project is licensed under the **MIT License**.
+
+See the [`LICENSE`](LICENSE) file for details.
+
+## Author
+
+**Chavhann**
+
+GitHub: https://github.com/Chavhann
