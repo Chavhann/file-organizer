@@ -1,5 +1,9 @@
 # Python File Organizer
 
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue)](https://www.python.org/)
+[![Tests](https://img.shields.io/badge/Tests-14%20passed-brightgreen)](https://pytest.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
+
 A safe and modular Python CLI tool that automatically organizes files into categorized folders based on their file extensions.
 
 The tool is designed with safety in mind and includes **Dry Run**, **collision protection**, **organization history**, and **Undo** support.
