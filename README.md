@@ -68,15 +68,14 @@ Scan Loose Files
 
 ```text
 file-organizer/
-├── README.md
-├── src/
-│   ├── classifier.py
-│   ├── file_manager.py
-│   └── organizer.py
-└── tests/
-    ├── test_classifier.py
-    └── test_file_manager.py
-```
+|-- README.md
+|-- src/
+|   |-- classifier.py
+|   |-- file_manager.py
+|   `-- organizer.py
+`-- tests/
+    |-- test_classifier.py
+    `-- test_file_manager.py
 
 ### Modules
 
